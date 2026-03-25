@@ -58,13 +58,12 @@ class TTLSDClass(protocol_packet_handler):
         self.groupSyncWrite = GroupSyncWrite(self, LY_TTLSD_ACC, 7)
 
     def WritePosEx(self, scs_id, position, speed, acc, torque):
-        position = self.scs_tohost(position, 15)
         txpacket = [acc, self.scs_lobyte(position), self.scs_hibyte(position), self.scs_lobyte(torque), self.scs_hibyte(torque), self.scs_lobyte(speed), self.scs_hibyte(speed)]
         return self.writeTxRx(scs_id, LY_TTLSD_ACC, len(txpacket), txpacket)
     
     def ReadPos(self, scs_id):
         scs_present_position, scs_comm_result, scs_error = self.read2ByteTxRx(scs_id, LY_TTLSD_PRESENT_POSITION_L)
-        return self.scs_tohost(scs_present_position, 15), scs_comm_result, scs_error
+        return scs_present_position, scs_comm_result, scs_error
 
     def ReadSpeed(self, scs_id):
         scs_present_speed, scs_comm_result, scs_error = self.read2ByteTxRx(scs_id, LY_TTLSD_PRESENT_SPEED_L)
@@ -81,12 +80,10 @@ class TTLSDClass(protocol_packet_handler):
         return moving, scs_comm_result, scs_error
 
     def SyncWritePosEx(self, scs_id, position, speed, acc, torque):
-        position = self.scs_tohost(position, 15)
         txpacket = [acc, self.scs_lobyte(position), self.scs_hibyte(position), self.scs_lobyte(torque), self.scs_hibyte(torque), self.scs_lobyte(speed), self.scs_hibyte(speed)]
         return self.groupSyncWrite.addParam(scs_id, txpacket)
 
     def RegWritePosEx(self, scs_id, position, speed, acc, torque):
-        position = self.scs_tohost(position, 15)
         txpacket = [acc, self.scs_lobyte(position), self.scs_hibyte(position), self.scs_lobyte(torque), self.scs_hibyte(torque), self.scs_lobyte(speed), self.scs_hibyte(speed)]
         return self.regWriteTxRx(scs_id, LY_TTLSD_ACC, len(txpacket), txpacket)
 
