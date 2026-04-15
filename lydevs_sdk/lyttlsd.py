@@ -63,6 +63,7 @@ class TTLSDClass(protocol_packet_handler):
     
     def ReadPos(self, scs_id):
         scs_present_position, scs_comm_result, scs_error = self.read2ByteTxRx(scs_id, LY_TTLSD_PRESENT_POSITION_L)
+        scs_present_position = scs_present_position & 0xFFFF
         return scs_present_position, scs_comm_result, scs_error
 
     def ReadSpeed(self, scs_id):
@@ -71,9 +72,9 @@ class TTLSDClass(protocol_packet_handler):
 
     def ReadPosSpeed(self, scs_id):
         scs_present_position_speed, scs_comm_result, scs_error = self.read4ByteTxRx(scs_id, LY_TTLSD_PRESENT_POSITION_L)
-        scs_present_position = self.scs_loword(scs_present_position_speed)
+        scs_present_position = self.scs_loword(scs_present_position_speed) & 0xFFFF
         scs_present_speed = self.scs_hiword(scs_present_position_speed)
-        return self.scs_tohost(scs_present_position, 15), self.scs_tohost(scs_present_speed, 15), scs_comm_result, scs_error
+        return scs_present_position, self.scs_tohost(scs_present_speed, 15), scs_comm_result, scs_error
 
     def ReadMoving(self, scs_id):
         moving, scs_comm_result, scs_error = self.read1ByteTxRx(scs_id, LY_TTLSD_MOVING)
